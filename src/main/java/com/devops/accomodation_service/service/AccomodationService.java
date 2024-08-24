@@ -53,7 +53,7 @@ public class AccomodationService {
             if (numberOfGuests != 0 && accomodation.getMinGuestNum() <= numberOfGuests && accomodation.getMaxGuestNum() >= numberOfGuests) {
                 continue;
             }
-
+          
             if (!isSlotInbetween(s, availability.getSlot())) {
                 continue;
             }
