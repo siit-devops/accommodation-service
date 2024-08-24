@@ -13,11 +13,11 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class AccomodationDTO {
-
     private String name;
     private String description;
     private int minGuestNum;
     private int maxGuestNum;
     private Location location;
     private Set<String> tags;
+    private Set<AvailabilityDTO> availabilities;
 }

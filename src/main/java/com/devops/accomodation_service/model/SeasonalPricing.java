@@ -1,11 +1,13 @@
 package com.devops.accomodation_service.model;
 
+import com.devops.accomodation_service.enumerations.DayOfTheWeek;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,21 +16,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Accomodation {
+public class SeasonalPricing {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Long userId;
-    private String name;
+    private double seasonalPrice;
+    @OneToOne
+    private Slot slot;
     private String description;
-    private int minGuestNum = 0;
-    private int maxGuestNum;
     @ElementCollection
-    private Set<String> tags;
-    @ElementCollection
-    private Set<String> images;
-    @ManyToOne
-    private Location location;
-    @OneToMany
-    private Set<Availability> availabilities;
+    private Set<DayOfTheWeek> daysOfTheWeek;
 }

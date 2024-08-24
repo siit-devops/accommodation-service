@@ -14,21 +14,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Accomodation {
+public class Price {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Long userId;
-    private String name;
-    private String description;
-    private int minGuestNum = 0;
-    private int maxGuestNum;
-    @ElementCollection
-    private Set<String> tags;
-    @ElementCollection
-    private Set<String> images;
-    @ManyToOne
-    private Location location;
+    private double basePrice;
+    private boolean perPerson;
     @OneToMany
-    private Set<Availability> availabilities;
+    Set<SeasonalPricing> seasonalPricings;
 }

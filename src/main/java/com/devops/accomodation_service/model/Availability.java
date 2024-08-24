@@ -1,5 +1,6 @@
 package com.devops.accomodation_service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,21 +15,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Accomodation {
+public class Availability {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Long userId;
-    private String name;
-    private String description;
-    private int minGuestNum = 0;
-    private int maxGuestNum;
-    @ElementCollection
-    private Set<String> tags;
-    @ElementCollection
-    private Set<String> images;
-    @ManyToOne
-    private Location location;
+    @OneToOne
+    private Price price;
+    @OneToOne
+    private Slot slot;
     @OneToMany
-    private Set<Availability> availabilities;
+    private Set<Slot> unavailableSlots;
 }
