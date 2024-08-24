@@ -18,7 +18,7 @@ public class AvailabilityController {
 
     @PostMapping("/accommodation/check-availability")
     public boolean checkAvailability(@Valid @RequestBody AvailabilityDTO dto) {
-        return accomodationService.checkAvailability(dto);
+        return accomodationService.checkAvailability(dto.getId(), dto.getSlot().getStartDate(), dto.getSlot().getEndDate(), dto.getNumberOfGuests());
     }
 
     @PutMapping("/update/{id}")

@@ -2,9 +2,11 @@ package com.devops.accomodation_service.service;
 
 import com.devops.accomodation_service.dto.AvailabilityDTO;
 import com.devops.accomodation_service.dto.SlotDTO;
+import com.devops.accomodation_service.enumerations.DayOfTheWeek;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
 import com.devops.accomodation_service.model.Availability;
+import com.devops.accomodation_service.model.SeasonalPricing;
 import com.devops.accomodation_service.model.Slot;
 import com.devops.accomodation_service.repository.AccomodationRepository;
 import com.devops.accomodation_service.repository.LocationRepository;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,13 +43,17 @@ public class AccomodationService {
         accomodationRepository.deleteById(id);
     }
 
-    public boolean checkAvailability(AvailabilityDTO dto) {
-        Accomodation accomodation = findOneAccomodation(dto.getId());
+    public boolean checkAvailability(UUID accomodationId, LocalDate startDate, LocalDate endDate, int numberOfGuests) {
+        Accomodation accomodation = findOneAccomodation(accomodationId);
         Slot s = new Slot();
-        s.setStartDate(dto.getSlot().getStartDate());
-        s.setEndDate(dto.getSlot().getEndDate());
+        s.setStartDate(startDate);
+        s.setEndDate(endDate);
 
         for (Availability availability : accomodation.getAvailabilities()) {
+            if (numberOfGuests != 0 && accomodation.getMinGuestNum() <= numberOfGuests && accomodation.getMaxGuestNum() >= numberOfGuests) {
+                continue;
+            }
+
             if (!isSlotInbetween(s, availability.getSlot())) {
                 continue;
             }
@@ -59,9 +66,51 @@ public class AccomodationService {
             }
         }
 
-        // TODO check with reservation service! Can change only for ranges with no ongoing reservations!
-
         return true;
+    }
+
+    public double calculatePrice(UUID accomodationId, LocalDate startDate, LocalDate endDate, int numberOfGuests) {
+        Accomodation accomodation = findOneAccomodation(accomodationId);
+        Slot s = new Slot();
+        s.setStartDate(startDate);
+        s.setEndDate(endDate);
+        LocalDate currentDate = LocalDate.parse(startDate.toString());
+        double finalPrice = 0;
+
+        for (Availability availability : accomodation.getAvailabilities()) {
+            if (!isSlotInbetween(s, availability.getSlot())) {
+                continue;
+            }
+
+            while (currentDate.isBefore(endDate)) {
+                double priceOnDay = availability.getPrice().getBasePrice();
+                Slot currentDaySlot = new Slot();
+                currentDaySlot.setStartDate(currentDate);
+                currentDaySlot.setEndDate(currentDate);
+                for (SeasonalPricing sp : availability.getPrice().getSeasonalPricings())
+                {
+                    if (isSlotInbetween(currentDaySlot, sp.getSlot()) && (
+                            sp.getDaysOfTheWeek().contains(DayOfTheWeek.NOT_SPECIFIED) ||
+                            sp.getDaysOfTheWeek().contains(currentDate.getDayOfWeek().getValue())))
+                    {
+                        priceOnDay = sp.getSeasonalPrice();
+                    }
+                }
+
+                if (availability.getPrice().isPerPerson())
+                {
+                    priceOnDay *= numberOfGuests;
+                }
+
+                finalPrice += priceOnDay;
+
+                currentDate = currentDate.plusDays(1);
+            }
+
+            break;
+        }
+
+        return finalPrice;
     }
 
     private boolean isSlotInbetween(Slot s1, Slot s2) {

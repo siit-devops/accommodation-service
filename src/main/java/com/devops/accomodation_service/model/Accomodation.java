@@ -23,6 +23,7 @@ public class Accomodation {
     private String description;
     private int minGuestNum = 0;
     private int maxGuestNum;
+    private boolean autoApproveReservation = false;
     @ElementCollection
     private Set<String> tags;
     @ElementCollection

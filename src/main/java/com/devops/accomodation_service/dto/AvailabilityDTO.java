@@ -17,4 +17,5 @@ public class AvailabilityDTO {
     private SlotDTO slot;
     private PriceDTO price;
     private Set<SlotDTO> unavailableSlots;
+    private int numberOfGuests = 0;
 }
