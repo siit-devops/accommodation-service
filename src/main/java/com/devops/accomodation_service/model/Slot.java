@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -16,12 +17,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Location {
+public class Slot {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String name;
-    private String fullAddress;
-    private double lon;
-    private double lat;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

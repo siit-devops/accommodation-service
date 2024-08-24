@@ -4,13 +4,17 @@ import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
 import com.devops.accomodation_service.service.AccomodationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
-@Service
+@RestController
+@RequestMapping("/api/accommodation")
 @RequiredArgsConstructor
+@Slf4j
 public class AccomodationController {
 
     private final AccomodationService accomodationService;
@@ -21,7 +25,7 @@ public class AccomodationController {
     }
 
     @GetMapping("/{id}")
-    public Accomodation getAccommodationById(@PathVariable Long id) throws NotFoundException {
+    public Accomodation getAccommodationById(@PathVariable UUID id) throws NotFoundException {
         return accomodationService.findOneAccomodation(id);
     }
 
@@ -31,7 +35,7 @@ public class AccomodationController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    public void deleteById(@PathVariable UUID id) {
         accomodationService.deleteAccomodation(id);
     }
 }

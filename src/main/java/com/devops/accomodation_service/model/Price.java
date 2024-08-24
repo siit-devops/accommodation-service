@@ -1,14 +1,12 @@
 package com.devops.accomodation_service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -16,12 +14,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Location {
+public class Price {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String name;
-    private String fullAddress;
-    private double lon;
-    private double lat;
+    private double basePrice;
+    private boolean perPerson;
+    @OneToMany
+    Set<SeasonalPricing> seasonalPricings;
 }
