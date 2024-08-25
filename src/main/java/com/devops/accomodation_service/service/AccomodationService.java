@@ -1,8 +1,8 @@
 package com.devops.accomodation_service.service;
 
-import com.devops.accomodation_service.dto.AvailabilityDTO;
-import com.devops.accomodation_service.dto.SlotDTO;
+import com.devops.accomodation_service.dto.internal.reservation.ReservationDto;
 import com.devops.accomodation_service.enumerations.DayOfTheWeek;
+import com.devops.accomodation_service.dto.internal.reservation.AccommodationReservation;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
 import com.devops.accomodation_service.model.Availability;
@@ -35,7 +35,7 @@ public class AccomodationService {
         return accomodationRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    public List<Accomodation> findAllAccomodation(){
+    public List<Accomodation> findAllAccomodation() {
         return accomodationRepository.findAll();
     }
 
@@ -45,28 +45,26 @@ public class AccomodationService {
 
     public boolean checkAvailability(UUID accomodationId, LocalDate startDate, LocalDate endDate, int numberOfGuests) {
         Accomodation accomodation = findOneAccomodation(accomodationId);
+
+        if (numberOfGuests != 0 && (numberOfGuests < accomodation.getMinGuestNum() || numberOfGuests > accomodation.getMaxGuestNum())) {
+            return false;
+        }
+
         Slot s = new Slot();
         s.setStartDate(startDate);
         s.setEndDate(endDate);
 
         for (Availability availability : accomodation.getAvailabilities()) {
-            if (numberOfGuests != 0 && accomodation.getMinGuestNum() <= numberOfGuests && accomodation.getMaxGuestNum() >= numberOfGuests) {
-                continue;
-            }
-          
-            if (!isSlotInbetween(s, availability.getSlot())) {
-                continue;
-            }
-
-            for (Slot slot : availability.getUnavailableSlots())
-            {
-                if (doSlotsOverlap(s, slot)) {
-                    return false;
+            if (isSlotInbetween(s, availability.getSlot())) {
+                for (Slot slot : availability.getUnavailableSlots()) {
+                    if (doSlotsOverlap(s, slot)) {
+                        return false;
+                    }
                 }
+                return true;
             }
         }
-
-        return true;
+        return false;
     }
 
     public double calculatePrice(UUID accomodationId, LocalDate startDate, LocalDate endDate, int numberOfGuests) {
@@ -121,5 +119,29 @@ public class AccomodationService {
     public boolean doSlotsOverlap(Slot s1, Slot s2) {
         return s1.getStartDate().isBefore(s2.getEndDate().plusDays(1)) &&
                 s1.getEndDate().isAfter(s2.getStartDate().minusDays(1));
+    }
+
+    public AccommodationReservation makeReservation(ReservationDto reservationDto) {
+        var accommodation = accomodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(NotFoundException::new);
+
+        var available = checkAvailability(
+                reservationDto.getAccommodationId(),
+                reservationDto.getReservationStart(),
+                reservationDto.getReservationEnd(),
+                reservationDto.getGuestNumber()
+        );
+        if (available) {
+            var totalPrice = calculatePrice(
+                    accommodation.getId(),
+                    reservationDto.getReservationStart(),
+                    reservationDto.getReservationEnd(),
+                    reservationDto.getGuestNumber()
+            );
+            return AccommodationReservation.builder()
+                    .autoApproveReservation(accommodation.isAutoApproveReservation())
+                    .totalPrice(totalPrice)
+                    .build();
+        }
+        return null;
     }
 }

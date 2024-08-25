@@ -12,8 +12,9 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication
 @AllArgsConstructor
 public class AccomodationServiceApplication implements CommandLineRunner {
 
@@ -77,8 +78,9 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 				.build();
 
 		Accomodation accommodation1 = Accomodation.builder()
+				.id(UUID.fromString("d6935b63-6fa8-4680-a0e6-21beac234c9e"))
 				.location(location1)
-				.userId(1L)
+				.userId(UUID.fromString("3758dd13-96cb-4a24-97b9-342564edfb7a"))
 				.maxGuestNum(10)
 				.minGuestNum(1)
 				.availabilities(Set.of(availability1))

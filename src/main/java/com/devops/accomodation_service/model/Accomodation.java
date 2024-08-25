@@ -18,7 +18,7 @@ public class Accomodation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Long userId;
+    private UUID userId;
     private String name;
     private String description;
     private int minGuestNum = 0;
