@@ -11,7 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface AccomodationRepository extends JpaRepository<Accomodation, UUID> {
-    @Modifying
-    @Query("delete from Accomodation a where a.userId = ?1")
-    void deleteAllByUserId(UUID hostId);
+    void deleteAllByUserId(UUID userId);
 }

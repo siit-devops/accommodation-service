@@ -21,7 +21,7 @@ public class SeasonalPricing {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private double seasonalPrice;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Slot slot;
     private String description;
     @ElementCollection

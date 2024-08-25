@@ -20,6 +20,6 @@ public class Price {
     private UUID id;
     private double basePrice;
     private boolean perPerson;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     Set<SeasonalPricing> seasonalPricings;
 }

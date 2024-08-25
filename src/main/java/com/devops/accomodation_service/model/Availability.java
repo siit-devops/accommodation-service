@@ -19,10 +19,10 @@ public class Availability {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Price price;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Slot slot;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Slot> unavailableSlots;
 }
