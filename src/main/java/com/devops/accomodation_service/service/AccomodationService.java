@@ -144,4 +144,9 @@ public class AccomodationService {
         }
         return null;
     }
+
+    @Transactional
+    public void deleteUsersAccommodations(UUID hostId) {
+        accomodationRepository.deleteAllByUserId(hostId);
+    }
 }

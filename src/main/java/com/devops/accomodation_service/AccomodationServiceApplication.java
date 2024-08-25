@@ -90,11 +90,6 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 				.images(Set.of("https://res.cloudinary.com/dkdue4xbo/image/upload/v1663276292/products/rbhgqm9hyljv3wjosp2h.jpg"))
 				.build();
 
-		slotRepository.saveAll(List.of(slot1, slot2, slot3, slotSP));
-		seasonalPricingRepository.save(seasonal1);
-		priceRepository.save(price1);
-		availabilityRepository.save(availability1);
-		locationRepository.save(location1);
 		accomodationRepository.save(accommodation1);
 	}
 }
