@@ -4,10 +4,9 @@ import com.devops.accomodation_service.dto.internal.reservation.AccommodationRes
 import com.devops.accomodation_service.dto.internal.reservation.ReservationDto;
 import com.devops.accomodation_service.service.AccomodationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/internal/accommodations")
@@ -19,6 +18,11 @@ public class InternalAccommodationController {
     @PostMapping("/make-reservation")
     AccommodationReservation makeReservationForAccommodation(@RequestBody ReservationDto reservationDto) {
         return accomodationService.makeReservation(reservationDto);
+    }
+
+    @DeleteMapping("/delete-users-accommodations/{userId}")
+    void deleteUsersAccommodation(@PathVariable String userId) {
+        accomodationService.deleteUsersAccommodations(UUID.fromString(userId));
     }
 
 }

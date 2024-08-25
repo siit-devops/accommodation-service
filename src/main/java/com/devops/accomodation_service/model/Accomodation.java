@@ -28,8 +28,8 @@ public class Accomodation {
     private Set<String> tags;
     @ElementCollection
     private Set<String> images;
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Location location;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Availability> availabilities;
 }
