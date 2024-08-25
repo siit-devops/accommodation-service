@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class SeasonalPricingDTO {
     private double seasonalPrice;
-    private SlotDTO slotDTO;
+    private SlotDTO slot;
     private String description;
     private Set<DayOfTheWeek> daysOfTheWeek;
 }

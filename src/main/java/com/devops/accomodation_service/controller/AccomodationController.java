@@ -1,5 +1,6 @@
 package com.devops.accomodation_service.controller;
 
+import com.devops.accomodation_service.dto.AccomodationDTO;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
 import com.devops.accomodation_service.service.AccomodationService;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/accommodation")
+@RequestMapping("/api/accomodation")
 @RequiredArgsConstructor
 @Slf4j
 public class AccomodationController {
@@ -30,8 +31,13 @@ public class AccomodationController {
     }
 
     @PostMapping()
-    public Accomodation create(@RequestBody Accomodation dto) {
+    public Accomodation create(@RequestBody AccomodationDTO dto) {
         return accomodationService.createAccomodation(dto);
+    }
+
+    @PostMapping("/update/{id}")
+    public Accomodation update(@PathVariable UUID id, @RequestBody AccomodationDTO dto) {
+        return accomodationService.updateAccomodation(id, dto);
     }
 
     @DeleteMapping("/{id}")
