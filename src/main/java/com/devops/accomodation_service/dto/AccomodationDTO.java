@@ -17,7 +17,9 @@ public class AccomodationDTO {
     private String description;
     private int minGuestNum;
     private int maxGuestNum;
-    private Location location;
+    private boolean autoApproveReservation;
     private Set<String> tags;
+    private Set<String> images;
+    private LocationDTO location;
     private Set<AvailabilityDTO> availabilities;
 }
