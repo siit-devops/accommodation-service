@@ -9,11 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/accomodation")
+@RequestMapping("/api/accommodation")
 @RequiredArgsConstructor
 @Slf4j
 public class AccomodationController {
@@ -43,5 +44,10 @@ public class AccomodationController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable UUID id) {
         accomodationService.deleteAccomodation(id);
+    }
+
+    @GetMapping("/host/all")
+    public List<Accomodation> getAllAccommodationsForHost(Principal principal) {
+        return accomodationService.getAllForHost(UUID.fromString(principal.getName()));
     }
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 public class ReservationDto {
     private UUID accommodationId;
     private UUID hostId;
-    private Integer guestNumber;
+    private Integer guestNumber = 1;
     private Double totalPrice;
     private Double priceByGuest;
     private LocalDate reservationStart;

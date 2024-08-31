@@ -221,4 +221,8 @@ public class AccomodationService {
         availability.setPrice(createPrice(availabilityDTO.getPrice()));
         return availability;
     }
+
+    public List<Accomodation> getAllForHost(UUID hostId) {
+        return accomodationRepository.findAllByUserId(hostId);
+    }
 }
