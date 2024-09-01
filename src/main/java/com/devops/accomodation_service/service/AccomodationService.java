@@ -7,8 +7,8 @@ import com.devops.accomodation_service.dto.internal.reservation.AccommodationRes
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.*;
 import com.devops.accomodation_service.repository.AccomodationRepository;
+import com.devops.accomodation_service.service.feignClients.UserClient;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,11 +18,16 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AccomodationService {
 
     private final AccomodationRepository accomodationRepository;
+    private final UserClient userClient;
+
+    public AccomodationService(AccomodationRepository accomodationRepository, UserClient userClient) {
+        this.accomodationRepository = accomodationRepository;
+        this.userClient = userClient;
+    }
 
     public Accomodation createAccomodation(AccomodationDTO dto) {
         Accomodation accomodation = new Accomodation();
@@ -92,18 +97,15 @@ public class AccomodationService {
                 Slot currentDaySlot = new Slot();
                 currentDaySlot.setStartDate(currentDate);
                 currentDaySlot.setEndDate(currentDate);
-                for (SeasonalPricing sp : availability.getPrice().getSeasonalPricings())
-                {
+                for (SeasonalPricing sp : availability.getPrice().getSeasonalPricings()) {
                     if (isSlotInbetween(currentDaySlot, sp.getSlot()) && (
                             sp.getDaysOfTheWeek().contains(DayOfTheWeek.NOT_SPECIFIED) ||
-                            sp.getDaysOfTheWeek().contains(currentDate.getDayOfWeek().getValue())))
-                    {
+                                    sp.getDaysOfTheWeek().contains(currentDate.getDayOfWeek().getValue()))) {
                         priceOnDay = sp.getSeasonalPrice();
                     }
                 }
 
-                if (availability.getPrice().isPerPerson())
-                {
+                if (availability.getPrice().isPerPerson()) {
                     priceOnDay *= numberOfGuests;
                 }
 
@@ -147,8 +149,7 @@ public class AccomodationService {
         accomodationRepository.deleteAllByUserId(hostId);
     }
 
-    private Accomodation fillAccomodation(Accomodation accomodation, AccomodationDTO dto)
-    {
+    private Accomodation fillAccomodation(Accomodation accomodation, AccomodationDTO dto) {
         Set<Availability> availabilitySet = new HashSet<>();
         for (AvailabilityDTO availabilityDTO : dto.getAvailabilities()) {
             availabilitySet.add(createAvailability(availabilityDTO));
@@ -225,4 +226,27 @@ public class AccomodationService {
     public List<Accomodation> getAllForHost(UUID hostId) {
         return accomodationRepository.findAllByUserId(hostId);
     }
+
+    public AccommodationWithHostDto getAccommodationWithHostById(UUID id) {
+        Accomodation accommodation = findOneAccomodation(id);
+        UserDto host = userClient.findById(accommodation.getUserId());
+
+        return AccommodationWithHostDto.builder()
+                .id(accommodation.getId())
+                .name(accommodation.getName())
+                .description(accommodation.getDescription())
+                .minGuestNum(accommodation.getMinGuestNum())
+                .maxGuestNum(accommodation.getMaxGuestNum())
+                .tags(accommodation.getTags())
+                .images(accommodation.getImages())
+                .location(LocationDTO.builder()
+                        .name(accommodation.getLocation().getName())
+                        .lon(accommodation.getLocation().getLon())
+                        .lat(accommodation.getLocation().getLat())
+                        .fullAddress(accommodation.getLocation().getFullAddress())
+                        .build())
+                .host(host)
+                .build();
+    }
+
 }

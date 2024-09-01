@@ -6,19 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccomodationDTO {
+public class AccommodationWithHostDto {
+    private UUID id;
+    private UserDto host;
     private String name;
     private String description;
     private int minGuestNum;
     private int maxGuestNum;
-    private boolean autoApproveReservation;
     private Set<String> tags;
     private Set<String> images;
     private LocationDTO location;
-    private Set<AvailabilityDTO> availabilities;
 }

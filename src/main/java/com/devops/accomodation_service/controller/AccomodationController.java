@@ -1,5 +1,6 @@
 package com.devops.accomodation_service.controller;
 
+import com.devops.accomodation_service.dto.AccommodationWithHostDto;
 import com.devops.accomodation_service.dto.AccomodationDTO;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
@@ -27,8 +28,8 @@ public class AccomodationController {
     }
 
     @GetMapping("/{id}")
-    public Accomodation getAccommodationById(@PathVariable UUID id) throws NotFoundException {
-        return accomodationService.findOneAccomodation(id);
+    public AccommodationWithHostDto getAccommodationById(@PathVariable UUID id) throws NotFoundException {
+        return accomodationService.getAccommodationWithHostById(id);
     }
 
     @PostMapping()

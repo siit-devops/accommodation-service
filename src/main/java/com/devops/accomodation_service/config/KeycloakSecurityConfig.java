@@ -47,6 +47,8 @@ public class KeycloakSecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/internal/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodation").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodation/{id}").permitAll()
                         .anyRequest().authenticated()
                 );
 

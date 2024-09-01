@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @SpringBootApplication
 @AllArgsConstructor
+@EnableFeignClients
 public class AccomodationServiceApplication implements CommandLineRunner {
 
 	private final AccomodationRepository accomodationRepository;
@@ -32,10 +34,10 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		Location location1 = Location.builder()
-				.name("loc1")
-				.fullAddress("FullAddress 1")
-				.lon(0.0001)
-				.lat(0.0002)
+				.name("Novi Sad")
+				.fullAddress("Dunavska 1, Novi Sad, Serbia")
+				.lon(19.814981)
+				.lat(45.180636)
 				.build();
 
 		Slot slot1 = Slot.builder()
@@ -87,7 +89,14 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 				.tags(Set.of("WI FI", "Parking", "Bazen"))
 				.name("Soba")
 				.description("Neki opis kako je super i povoljno...")
-				.images(Set.of("https://res.cloudinary.com/dkdue4xbo/image/upload/v1663276292/products/rbhgqm9hyljv3wjosp2h.jpg"))
+				.images(Set.of(
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725181936/booking_images/vgzayoeltwqeaydya9qo.webp",
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725181936/booking_images/kmztn7c7pz6yojw4cr3a.webp",
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725181936/booking_images/vxdx09566nvikbydnsct.webp",
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725182302/booking_images/o7rloz4tgrxmss1jaahw.jpg",
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725182303/booking_images/myiphsu4f2jn5gybz2jw.webp",
+						"https://res.cloudinary.com/dn1hzzel2/image/upload/v1725182303/booking_images/axis1dqx8v6uda7qad3x.webp"
+				))
 				.build();
 
 		accomodationRepository.save(accommodation1);
