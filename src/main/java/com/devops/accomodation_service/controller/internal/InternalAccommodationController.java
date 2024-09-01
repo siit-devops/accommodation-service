@@ -25,4 +25,8 @@ public class InternalAccommodationController {
         accomodationService.deleteUsersAccommodations(UUID.fromString(userId));
     }
 
+    @GetMapping("host/{accomodationId}")
+    UUID getHostId(@PathVariable String accomodationId) {
+        return accomodationService.getHostId(UUID.fromString(accomodationId));
+    }
 }

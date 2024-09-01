@@ -42,7 +42,7 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 
 		Slot slot1 = Slot.builder()
 				.startDate(LocalDate.of(2024, 1, 1))
-				.endDate(LocalDate.of(2024, 6, 30))
+				.endDate(LocalDate.of(2024, 12, 30))
 				.build();
 
 		Slot slot2 = Slot.builder()
@@ -82,7 +82,7 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 		Accomodation accommodation1 = Accomodation.builder()
 				.id(UUID.fromString("d6935b63-6fa8-4680-a0e6-21beac234c9e"))
 				.location(location1)
-				.userId(UUID.fromString("f000bf79-137b-4176-a3c2-77aa919e98f2"))
+				.userId(UUID.fromString("8b7d56bd-cc2d-46f2-b27b-c63a1cab7af2"))
 				.maxGuestNum(10)
 				.minGuestNum(1)
 				.availabilities(Set.of(availability1))
