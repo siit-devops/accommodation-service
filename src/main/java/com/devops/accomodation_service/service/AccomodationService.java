@@ -249,4 +249,7 @@ public class AccomodationService {
                 .build();
     }
 
+    public UUID getHostId(UUID accomodationId) {
+        return findOneAccomodation(accomodationId).getUserId();
+    }
 }
