@@ -12,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -251,5 +248,31 @@ public class AccomodationService {
 
     public UUID getHostId(UUID accomodationId) {
         return findOneAccomodation(accomodationId).getUserId();
+    }
+
+    public AccommodationDetails getAccommodationDetails(UUID id) {
+        var accommodation = accomodationRepository.findById(id).orElseThrow(() -> new NotFoundException("Accommodation not found"));
+
+        return AccommodationDetails.builder()
+                .images(accommodation.getImages())
+                .name(accommodation.getName())
+                .build();
+    }
+
+    public List<AccommodationResultDto> search(SearchDto searchParams) {
+        // todo: search function
+        List<AccommodationResultDto> result = new ArrayList<>();
+
+        var accommodations = accomodationRepository.findAll();
+        for (var accommodation : accommodations) {
+            result.add(AccommodationResultDto.builder()
+                    .accommodation(accommodation)
+                    .totalPrice(50.)
+                    .pricePerGuest(5.)
+                    .distance(35.)
+                    .build()
+            );
+        }
+        return result;
     }
 }
