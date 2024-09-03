@@ -1,5 +1,6 @@
 package com.devops.accomodation_service.controller.internal;
 
+import com.devops.accomodation_service.dto.AccommodationDetails;
 import com.devops.accomodation_service.dto.internal.reservation.AccommodationReservation;
 import com.devops.accomodation_service.dto.internal.reservation.ReservationDto;
 import com.devops.accomodation_service.service.AccomodationService;
@@ -28,5 +29,11 @@ public class InternalAccommodationController {
     @GetMapping("host/{accomodationId}")
     UUID getHostId(@PathVariable String accomodationId) {
         return accomodationService.getHostId(UUID.fromString(accomodationId));
+    }
+
+    @GetMapping("/{id}")
+    AccommodationDetails getAccommodationDetails(@PathVariable UUID id) {
+        return accomodationService.getAccommodationDetails(id);
+
     }
 }

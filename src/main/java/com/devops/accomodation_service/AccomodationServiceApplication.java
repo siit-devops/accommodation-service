@@ -82,7 +82,7 @@ public class AccomodationServiceApplication implements CommandLineRunner {
 		Accomodation accommodation1 = Accomodation.builder()
 				.id(UUID.fromString("d6935b63-6fa8-4680-a0e6-21beac234c9e"))
 				.location(location1)
-				.userId(UUID.fromString("8b7d56bd-cc2d-46f2-b27b-c63a1cab7af2"))
+				.userId(UUID.fromString("f4862d72-0c8f-469a-8183-5156eb4f2b3e"))
 				.maxGuestNum(10)
 				.minGuestNum(1)
 				.availabilities(Set.of(availability1))
