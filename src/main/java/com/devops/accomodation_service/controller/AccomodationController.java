@@ -1,7 +1,9 @@
 package com.devops.accomodation_service.controller;
 
+import com.devops.accomodation_service.dto.AccommodationResultDto;
 import com.devops.accomodation_service.dto.AccommodationWithHostDto;
 import com.devops.accomodation_service.dto.AccomodationDTO;
+import com.devops.accomodation_service.dto.SearchDto;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.Accomodation;
 import com.devops.accomodation_service.service.AccomodationService;
@@ -50,5 +52,10 @@ public class AccomodationController {
     @GetMapping("/host/all")
     public List<Accomodation> getAllAccommodationsForHost(Principal principal) {
         return accomodationService.getAllForHost(UUID.fromString(principal.getName()));
+    }
+
+    @GetMapping("/search")
+    public List<AccommodationResultDto> search(SearchDto searchParams){
+        return accomodationService.search(searchParams);
     }
 }
