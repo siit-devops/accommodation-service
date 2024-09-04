@@ -7,23 +7,28 @@ import com.devops.accomodation_service.dto.internal.reservation.AccommodationRes
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.*;
 import com.devops.accomodation_service.repository.AccomodationRepository;
+import com.devops.accomodation_service.service.feignClients.ReservationClient;
 import com.devops.accomodation_service.service.feignClients.UserClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class AccomodationService {
 
+    private final double EARTH_RADIUS = 6371000; // Earth's radius in meters
     private final AccomodationRepository accomodationRepository;
     private final UserClient userClient;
+    private final ReservationClient reservationClient;
 
-    public AccomodationService(AccomodationRepository accomodationRepository, UserClient userClient) {
+    public AccomodationService(AccomodationRepository accomodationRepository, UserClient userClient, ReservationClient reservationClient) {
         this.accomodationRepository = accomodationRepository;
         this.userClient = userClient;
+        this.reservationClient = reservationClient;
     }
 
     public Accomodation createAccomodation(AccomodationDTO dto) {
@@ -260,19 +265,45 @@ public class AccomodationService {
     }
 
     public List<AccommodationResultDto> search(SearchDto searchParams) {
-        // todo: search function
         List<AccommodationResultDto> result = new ArrayList<>();
 
-        var accommodations = accomodationRepository.findAll();
-        for (var accommodation : accommodations) {
-            result.add(AccommodationResultDto.builder()
-                    .accommodation(accommodation)
-                    .totalPrice(50.)
-                    .pricePerGuest(5.)
-                    .distance(35.)
-                    .build()
-            );
+        List<UUID> unavailableAccommodations = reservationClient.getUnavailableAccomodations(searchParams.getStartDate(),
+                searchParams.getEndDate());
+
+        if(unavailableAccommodations.isEmpty())
+            unavailableAccommodations.add(UUID.fromString("-1"));
+
+        List<Accomodation> filteredAccommodations = accomodationRepository
+                .filter(searchParams.getGuestsNum(), unavailableAccommodations);
+
+        for (Accomodation accomodation : filteredAccommodations) {
+            if (checkAvailability(accomodation.getId(), searchParams.getStartDate(), searchParams.getEndDate(), searchParams.getGuestsNum()))
+            {
+                double totalPrice = calculatePrice(accomodation.getId(), searchParams.getStartDate(), searchParams.getEndDate(), searchParams.getGuestsNum());
+                result.add(AccommodationResultDto.builder()
+                        .accommodation(accomodation)
+                        .totalPrice(totalPrice)
+                        .pricePerGuest(totalPrice / searchParams.getGuestsNum())
+                        .distance(calculateDistance(searchParams.getLat(), searchParams.getLon(),
+                                accomodation.getLocation().getLat(), accomodation.getLocation().getLon()))
+                        .build()
+                );
+            }
         }
+
         return result;
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
     }
 }
