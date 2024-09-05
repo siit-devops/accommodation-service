@@ -4,6 +4,7 @@ import com.devops.accomodation_service.dto.*;
 import com.devops.accomodation_service.dto.internal.reservation.ReservationDto;
 import com.devops.accomodation_service.enumerations.DayOfTheWeek;
 import com.devops.accomodation_service.dto.internal.reservation.AccommodationReservation;
+import com.devops.accomodation_service.exceptions.BadRequestException;
 import com.devops.accomodation_service.exceptions.NotFoundException;
 import com.devops.accomodation_service.model.*;
 import com.devops.accomodation_service.repository.AccomodationRepository;
@@ -31,9 +32,10 @@ public class AccomodationService {
         this.reservationClient = reservationClient;
     }
 
-    public Accomodation createAccomodation(AccomodationDTO dto) {
+    public Accomodation createAccomodation(AccomodationDTO dto, UUID hostId) {
         Accomodation accomodation = new Accomodation();
         fillAccomodation(accomodation, dto);
+        accomodation.setUserId(hostId);
 
         return accomodationRepository.save(accomodation);
     }
@@ -54,6 +56,10 @@ public class AccomodationService {
     }
 
     public void deleteAccomodation(UUID id) {
+        var deletedReservations = reservationClient.deleteReservationsByAccommodationId(id);
+        if (!deletedReservations) {
+            throw new BadRequestException("Accommodation has reservations in progress or in the future");
+        }
         accomodationRepository.deleteById(id);
     }
 
@@ -270,8 +276,8 @@ public class AccomodationService {
         List<UUID> unavailableAccommodations = reservationClient.getUnavailableAccomodations(searchParams.getStartDate(),
                 searchParams.getEndDate());
 
-        if(unavailableAccommodations.isEmpty())
-            unavailableAccommodations.add(UUID.fromString("-1"));
+//        if(unavailableAccommodations.isEmpty())
+//            unavailableAccommodations.add(UUID.fromString("-1"));
 
         List<Accomodation> filteredAccommodations = accomodationRepository
                 .filter(searchParams.getGuestsNum(), unavailableAccommodations);
@@ -305,5 +311,9 @@ public class AccomodationService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS * c;
+    }
+
+    public Accomodation getAccommodation(UUID id) {
+        return accomodationRepository.findById(id).orElseThrow(() -> new NotFoundException("Accommodation not found"));
     }
 }
