@@ -29,17 +29,22 @@ public class AccomodationController {
         return accomodationService.findAllAccomodation();
     }
 
+    @GetMapping("/full/{id}")
+    public Accomodation getAccomodation(@PathVariable UUID id) {
+        return accomodationService.getAccommodation(id);
+    }
+
     @GetMapping("/{id}")
     public AccommodationWithHostDto getAccommodationById(@PathVariable UUID id) throws NotFoundException {
         return accomodationService.getAccommodationWithHostById(id);
     }
 
     @PostMapping()
-    public Accomodation create(@RequestBody AccomodationDTO dto) {
-        return accomodationService.createAccomodation(dto);
+    public Accomodation create(@RequestBody AccomodationDTO dto, Principal principal) {
+        return accomodationService.createAccomodation(dto, UUID.fromString(principal.getName()));
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public Accomodation update(@PathVariable UUID id, @RequestBody AccomodationDTO dto) {
         return accomodationService.updateAccomodation(id, dto);
     }
