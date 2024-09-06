@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class AccomodationController {
 
     @GetMapping()
     public List<Accomodation> getAllAccomodations() {
+        log.info("Get all accommodations at {}", LocalDateTime.now());
         return accomodationService.findAllAccomodation();
     }
 
